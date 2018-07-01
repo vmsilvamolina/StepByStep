@@ -68,4 +68,12 @@ Desde la consola de PowerShell, guardar como **TestConfig.ps1** el siguiente có
 
 **5-** Generar la configuración desde Automation:
 
-Seleccionar DSC Configurations, Add Configurations.
+a) Dentro del portal de Azure, y ubicados en grupo de recursos correspondiente. Seleccionamos la Automation Account recién creada.
+b) Seleccionamos **DSC Configurations** y luego **Add Configurations**.
+c) Seleccionamos para importar el archivo de PowerShell DSC **TestConfig.ps1**.
+
+**6-** Conectamos la VM y aplicamos la configuración
+
+a) Dentro de la Automation Account seleccionamos** DSC Nodes** y luego **Add Azure VM**.
+b) Elegimos de la lista la VM a la cuál queremos aplicar la configuración y seleccionamos **Connect**.
+c) Dentro del asistente de conexión a la VM, definimos el rol de Web Server (o no, en caso que sea necesario).
