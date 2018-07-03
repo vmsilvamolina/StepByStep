@@ -49,25 +49,25 @@ Luego de contar con los requisitos para el despliegue es necesario crear el arch
 
 Insertar la siguiente información:
 
-- name: Create Azure VM
-  hosts: localhost
-  connection: local
-  tasks:
-  - name: Create VM
-    azure_rm_virtualmachine:
-      resource_group: IaC
-      name: CentOS
-      vm_size: Standard_DS1_v2
-      admin_username: vmsilvamolina
-      ssh_password_enabled: false
-      ssh_public_keys: 
-        - path: /home/vmsilvamolina/.ssh/authorized_keys
-          key_data: "ssh-rsa AAAAB3Nza{spin}q4711"
-      image:
-        offer: CentOS
-        publisher: OpenLogic
-        sku: '7.5'
-        version: latest
+    - name: Create Azure VM
+    hosts: localhost
+    connection: local
+    tasks:
+    - name: Create VM
+        azure_rm_virtualmachine:
+        resource_group: IaC
+        name: CentOS
+        vm_size: Standard_DS1_v2
+        admin_username: vmsilvamolina
+        ssh_password_enabled: false
+        ssh_public_keys: 
+            - path: /home/vmsilvamolina/.ssh/authorized_keys
+            key_data: "ssh-rsa AAAAB3Nza{spin}q4711"
+        image:
+            offer: CentOS
+            publisher: OpenLogic
+            sku: '7.5'
+            version: latest
 
 **7-** Ejecutar el Playbook:
 
