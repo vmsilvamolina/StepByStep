@@ -27,15 +27,15 @@ Luego ejecutamos lo siguiente para generar el Resource Group:
 
 Para crear la VM, simplemente debemos ejecutar:
 
-az vm create \
-    --resource-group $ResourceGroupName \
-    --name $VmName \
-    --image win2016datacenter \
-    --admin-username vmsilvamolina \
-    --admin-password $AdminPassword \
-    --size Basic_A1 \
-    --use-unmanaged-disk \
-    --storage-sku Standard_LRS
+    az vm create \
+        --resource-group $ResourceGroupName \
+        --name $VmName \
+        --image win2016datacenter \
+        --admin-username vmsilvamolina \
+        --admin-password $AdminPassword \
+        --size Basic_A1 \
+        --use-unmanaged-disk \
+        --storage-sku Standard_LRS
 
 **3-** Crear la cuenta Azure Run As:
 
