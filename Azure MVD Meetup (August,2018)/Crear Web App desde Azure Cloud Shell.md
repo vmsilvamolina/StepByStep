@@ -1,4 +1,4 @@
-# DEMO - Crear una VM usando Ansible desde la Azure Cloud Shell
+# DEMO - Crear Web App desde Azure Cloud Shell
 
 Paso a paso para crear una VM con CentOS desde la Azure Cloud Shell utilizando Ansible para aprovisionar.
 Para la demo se utilizaron los siguientes valores:
