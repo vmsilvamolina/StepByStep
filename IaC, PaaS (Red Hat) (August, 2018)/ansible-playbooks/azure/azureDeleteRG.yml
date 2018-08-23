@@ -1,0 +1,11 @@
+---
+- name: Delete RG
+  hosts: localhost
+  connection: local
+
+  tasks:
+  - name: Delete RG
+    azure_rm_resourcegroup:
+      name: demoAnsibleRG
+      state: absent
+      force: yes

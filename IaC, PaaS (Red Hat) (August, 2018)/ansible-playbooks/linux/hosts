@@ -1,0 +1,2 @@
+[demo_lnx]
+<publicIpAddress>   ansible_user=azureuser

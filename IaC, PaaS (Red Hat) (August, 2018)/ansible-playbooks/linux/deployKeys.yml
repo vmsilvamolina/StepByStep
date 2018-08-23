@@ -1,0 +1,13 @@
+---
+- hosts: demo_lnx
+  gather_facts: no
+
+  tasks:
+  - name: Set up multiple authorized keys
+    authorized_key:
+      user: azureuser
+      state: present
+      key: '{{ item }}'
+    with_file:
+      - '../ssh_keys/seba'
+      - '../ssh_keys/victor'
