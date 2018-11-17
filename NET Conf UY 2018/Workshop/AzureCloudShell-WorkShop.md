@@ -9,24 +9,13 @@ Workshop pensado para introducirnos a esta herramienta disponible desde el naveg
 
 ## Contenido
 
-- [Azure Cloud Shell: de 0 a Ninja!](#azure-cloud-shell-de-0-a-ninja)
-  - [Contenido](#contenido)
   - [Conocimiento previo](#conocimiento-previo)
   - [Nuevos skills](#nuevos-skills)
   - [Requisitos](#requisitos)
   - [Parte 1 - Accediendo a la Azure Cloud Shell](#parte-1---accediendo-a-la-azure-cloud-shell)
   - [Parte 2 - Crear una Virtual Machine](#parte-2---crear-una-virtual-machine)
-- [Introducción a Ansible](#introducci%C3%B3n-a-ansible)
-- [Parte 3 - Crear una VM con Ansible](#parte-3---crear-una-vm-con-ansible)
-  - [Introduction to Containers, Docker and Kubernetes](#introduction-to-containers-docker-and-kubernetes)
-  - [Part 3 - Manage Cluster with Cloud Shell](#part-3---manage-cluster-with-cloud-shell)
-  - [Part 4 - Deploy your First Application](#part-4---deploy-your-first-application)
-  - [Part 5 - Scale up your First Application](#part-5---scale-up-your-first-application)
-  - [Part 6 - Editing a Deployed Application](#part-6---editing-a-deployed-application)
-  - [Part 7 - When Disaster Strikes](#part-7---when-disaster-strikes)
-  - [Step 8 - Cleanup After the Workshop](#step-8---cleanup-after-the-workshop)
-
-
+  - [Introducción a Ansible](#introducci%C3%B3n-a-ansible)
+  - [Parte 3 - Crear una VM con Ansible](#parte-3---crear-una-vm-con-ansible)
   - [Introduction to Containers, Docker and Kubernetes](#introduction-to-containers-docker-and-kubernetes)
   - [Part 3 - Manage Cluster with Cloud Shell](#part-3---manage-cluster-with-cloud-shell)
   - [Part 4 - Deploy your First Application](#part-4---deploy-your-first-application)
@@ -97,22 +86,23 @@ Azure CLI es la línea de comandos de Azure.
 
 1. Crear el grupo de recursos que alojará la VM, ejecutando la siguiente línea:
 
-    az group create --name CloudShellWS --location eastus
+        az group create --name CloudShellWS --location eastus
 
 2. Lo siguiente es crear la vNet:
 
-    az network vnet create --resource-group CloudShellWS --name vNET --subnet-name subnet
+        az network vnet create --resource-group CloudShellWS --name vNET --subnet-name subnet
 
 3. El siguiente paso es crear una Public IP:
 
-    az network public-ip create --resource-group CloudShellWS --name PublicIP
+        az network public-ip create --resource-group CloudShellWS --name PublicIP
 
 4. Continuando el proceso el siguiente paso es crear el Network Security Group.
 
-    az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
+        az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
 
 5. Resta crear la virtual network card y luego, asociarla a la Public IP y el NSG.
-    az network nic create --resource-group CloudShellWS --name NIC --vnet-name vNET --subnet subnet --network-security-group NetworkSecurityGroup --public-ip-address PublicIP
+
+        az network nic create --resource-group CloudShellWS --name NIC --vnet-name vNET --subnet subnet --network-security-group NetworkSecurityGroup --public-ip-address PublicIP
 
 6. Ahora sí, con todos los recursos generados, vamos a crear la virtual machine.
 
@@ -136,11 +126,11 @@ Para obtener la IP pública es necesario ejecutar:
 
 Y luego utilizamos el cliente RDP para conectarnos con el usuario y clave.
 
-# Introducción a Ansible
+## Introducción a Ansible
 
 Vamos a charlar un poco de que trata Ansible y como podemos utilizarla desde la Azure Cloud Shell.
 
-# Parte 3 - Crear una VM con Ansible
+## Parte 3 - Crear una VM con Ansible
 
 1. Ver lista de Resource Groups existentes:
 
@@ -170,54 +160,35 @@ Para conectarnos de forma más segura, en lugar de definir una contraseña, vamo
 
 Se encuentra disponible el archivo con el playbook listo. Para acceder a él basta ejecutar lo siguiente:
 
-    wget 
+    wget https://raw.githubusercontent.com/vmsilvamolina/TalksAndMore/master/NET%20Conf%20UY%202018/Workshop/azure_create_vm.yml
+
+6. Ahora que tenemos a disposición el archivo, vamos a editarlo usando **code**:
+
+    code ./azure_create_vm.yml
+
+Para guardar utilizamos Ctrl + S.
+Para cerrar Ctrl + Q.
+
+7. Ejecutamos el playbook de la siguiente manera:
+
+    ansible-playbook ./azure_create.vm.yml
 
 
+## Parte 4 - Crear un Azure Container Service
+
+El objetivo es generar un cluster de ACS para hostear nuestros contenedores.
+
+Cualquier servicio de ACS que sea creado tendrá de acceso público en Internet.
+Se asignará automáticamente una URL a su servicio de ACS donde podremos acceder a los contenedores y administrar su clúster.
 
 
+1. acceder a la **Cloud Shell** desde el portal de Azure o de forma individual desde la URL:
 
+   [![Acceder a Cloud Shell](https://shell.azure.com/images/launchcloudshell.png "Acceder aCloud Shell")](https://shell.azure.com)
 
+2. Dependiendo del tipo de suscripción (Free, Azure Pass, MSDN, etc.) se deberá registrar los providers requeridos. Esto se debe a que por defecto, algunos resource providers no están registrados.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-We will now use the Cloud Shell to create a new Azure Container Service (ACS)
-Kubernetes cluster that will be used to host our containers.
-
-Any ACS service you create will be publically accessible on the internet.
-A URL will be automatically assigned to your ACS service that you will be
-able to use to access your containers and manage your cluster.
-
-1. Launch an **Cloud Shell** in the Azure Portal or as a standalone console:
-
-   [![Launch Cloud Shell](https://shell.azure.com/images/launchcloudshell.png "Launch Cloud Shell")](https://shell.azure.com)
-
-2. Depending on your type of subscription (Free, Azure Pass etc.) you may
-   have to register the required resource providers. This is because by
-   default many resource providers (types of resource providers) are not
-   registered by default.
-
-   This only needs to be done once for a subscription. To do this, run
-   the following commands in Cloud Shell:
+Esto se debe hacer una única vez por suscripción. Ejecutando lo siguiente:
 
    ```bash
    az provider register --namespace Microsoft.Network
@@ -226,9 +197,9 @@ able to use to access your containers and manage your cluster.
    az provider register --namespace Microsoft.ContainerService --wait
    ```
 
-   ![Register Providers](images/registerproviders.png "Register Providers")
+   ![Registrar Providers](images/registerproviders.png "Registrar Providers")
 
-3. Come up with a **name** for your ACS service. The name must contain only
+1. Come up with a **name** for your ACS service. The name must contain only
    letters and numbers and be globally unique because it will be used for
   the public URLs of your Kubernetes cluster.
 
@@ -267,7 +238,7 @@ Once the Kubernetes cluster has been created we can continue with the workshop.
 In the meantime, we'll talk about what containers are and how they're used as
 well as talking about the components that make up a Kubernetes cluster.
 
-## Part 3 - Manage Cluster with Cloud Shell
+Administrar un Cluster with Cloud Shell
 
 Once your ACS has been created you will be able to review the resources that
 have been created:
@@ -295,7 +266,7 @@ manually, but the `Azure CLI` in Cloud Shell provides a handy way to do this for
 
    ![Configure Cloud Shell to manage ACS](images/configurecloudshellacs.png "Configure Cloud Shell to manage ACS")
 
-1. Validate our cluster is running by running the command:
+2. Validate our cluster is running by running the command:
 
    ```bash
    kubectl cluster-info
@@ -303,7 +274,7 @@ manually, but the `Azure CLI` in Cloud Shell provides a handy way to do this for
 
    ![Get Cluster Info](images/acsclusterinfo.png "Get Cluster Info")
 
-1. Check all nodes in the cluster by running the command:
+3. Check all nodes in the cluster by running the command:
 
    ```bash
    kubectl get nodes
