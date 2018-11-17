@@ -2,14 +2,6 @@
 
 Workshop pensado para introducirnos a esta herramienta disponible desde el navegador...
 
-This session will show you how to get started with Azure Container Service (ACS),
-one of the most powerful ways of running containerized applications in Azure.
-You'll learn how to set up a Kubernetes cluster using the Azure Cloud Shell and
-deploy a highly available and scalable web application with only a few commands.
-We'll then show how easy it is to scale up, reconfigure or update your
-application without any incurring any downtime to users.
-
-
 **Victor Silva**
 
 [Blog](https://blog.victorsilva.com.uy) | [@vmsilvamolina](https://twitter.com/vmsilvamolina) | [Linked-In](https://www.linkedin.com/in/vmsilvamolina/) | [Email](mailto:vmsilvamolina@hotmail.com) | [GitHub](https://www.github.com/vmsilvamolina)
@@ -23,7 +15,17 @@ application without any incurring any downtime to users.
   - [Nuevos skills](#nuevos-skills)
   - [Requisitos](#requisitos)
   - [Parte 1 - Accediendo a la Azure Cloud Shell](#parte-1---accediendo-a-la-azure-cloud-shell)
-  - [Part 2 - Create an Azure Container Service](#part-2---create-an-azure-container-service)
+  - [Parte 2 - Crear una Virtual Machine](#parte-2---crear-una-virtual-machine)
+- [Introducción a Ansible](#introducci%C3%B3n-a-ansible)
+  - [Introduction to Containers, Docker and Kubernetes](#introduction-to-containers-docker-and-kubernetes)
+  - [Part 3 - Manage Cluster with Cloud Shell](#part-3---manage-cluster-with-cloud-shell)
+  - [Part 4 - Deploy your First Application](#part-4---deploy-your-first-application)
+  - [Part 5 - Scale up your First Application](#part-5---scale-up-your-first-application)
+  - [Part 6 - Editing a Deployed Application](#part-6---editing-a-deployed-application)
+  - [Part 7 - When Disaster Strikes](#part-7---when-disaster-strikes)
+  - [Step 8 - Cleanup After the Workshop](#step-8---cleanup-after-the-workshop)
+
+
   - [Introduction to Containers, Docker and Kubernetes](#introduction-to-containers-docker-and-kubernetes)
   - [Part 3 - Manage Cluster with Cloud Shell](#part-3---manage-cluster-with-cloud-shell)
   - [Part 4 - Deploy your First Application](#part-4---deploy-your-first-application)
@@ -57,40 +59,126 @@ Para completar el workshop, es necesario contar con lo siguiente:
 
 ## Parte 1 - Accediendo a la Azure Cloud Shell
 
-Azure Cloud Shell is an interactive, browser-accessible shell for managing
-Azure resources. It provides the flexibility of choosing the shell experience
-that best suits the way you work. Linux users can opt for a Bash experience,
-while Windows users can opt for PowerShell.
+Azure Cloud Shell es una línea de comandos interactiva, accesible desde el navegador que permite administrar los recursos de Azure.
+Otorga flexibilidad al momento de elegir la experiencia entre bash, para los usuario de Linux, mientras que para los usuario de Windows se encuentra disponible PowerShell.
 
-1. Abrir la Azure Cloud Shell haciendo clic sobre el ícono:
+
+1. Abrir la Azure Cloud Shell haciendo click sobre el ícono:
    ![Abrir la Azure Cloud Shell](images/opencloudshell.png "Abrir la Azure Cloud Shell")
 
-> If you have **not** previously used Azure Cloud Shell:
+> Si **no** se había utilizado previamente la Azure Cloud Shell:
 
 ![Welcome to Cloud Shell](images/welcometocloudshell.png "Welcome to Cloud Shell")
 
 1. Click **Bash (Linux)**
 
-   _When you first create a Cloud Shell a storage account will get created
-   for you to store your settings, scripts and other files you might create. This
-   enables you to have access to your own environment no matter what device you're
-   using._
+   _Al momento de crear por primera vez la Cloud Shell una cuenta de storage se generará para alojar las configuraciones, scripts y otros archivos. Esto habilita tener acceso a nuestro propio ambiente sin importar el dispositivo que se utilice._
 
-   ![Create Cloud Shell Storage](images/createcloudshellstorage.png "Create Cloud Shell Storage")
+   ![Crear la Cloud Shell Storage](images/createcloudshellstorage.png "Crear la Cloud Shell Storage")
 
-2. Select the **subscription** to create the Storage Account in and click
-   **Create storage**.
-3. The Storage Account will be created and the Cloud Shell will be started:
+2. Seleccionar la **subscription** para crear la Storage Account y click **Create storage**.
+3. La Storage Account va a ser creada y se ejecutará la Cloud Shell:
 
    ![Cloud Shell Started](images/cloudshellstarted.png "Cloud Shell Started")
 
-> If you have previously used Azure Cloud Shell:
+> Si se había utilizado previamente la Azure Cloud Shell:
 
-1. Select **Bash** from the shell drop down:
+4. Seleccionar **Bash** desde la lista desplegable:
 
-   ![Select Bash Cloud Shell](images/selectbashcloudshell.png "Select Bash Cloud Shell")
+   ![Seleccionar Bash](images/selectbashcloudshell.png "Select Bash")
 
-## Part 2 - Create an Azure Container Service
+## Parte 2 - Crear una Virtual Machine
+
+
+Ahora vamos a utilizar Azure CLI para generar una máquina virtual.
+
+Azure CLI es la línea de comandos de Azure.
+
+
+1. Crear el grupo de recursos que alojará la VM, ejecutando la siguiente línea:
+
+        az group create --name CloudShellWS --location eastus
+
+2. Lo siguiente es crear la vNet:
+
+        az network vnet create --resource-group CloudShellWS --name vNET --subnet-name subnet
+
+3. El siguiente paso es crear una Public IP:
+
+        az network public-ip create --resource-group CloudShellWS --name PublicIP
+
+4. Continuando el proceso el siguiente paso es crear el Network Security Group.
+
+        az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
+
+5. Resta crear la virtual network card y luego, asociarla a la Public IP y el NSG.
+        az network nic create \
+          --resource-group CloudShellWS \
+          --name NIC \
+          --vnet-name vNET \
+          --subnet subnet \
+          --network-security-group NetworkSecurityGroup \
+          --public-ip-address PublicIP
+
+6. Ahora sí, con todos los recursos generados, vamos a crear la virtual machine.
+
+Pero antes, vamos a generar una variable (la password):
+
+        AdminPassword=ChangeYourAdminPassword1
+
+Finalmente ejecutamos el comando para crear la VM:
+        az vm create \
+            --resource-group CloudShellWS \
+            --name VM \
+            --location eastus \
+            --nics NIC \
+            --image win2016datacenter \
+            --admin-username azureuser \
+            --admin-password $AdminPassword
+
+7. Para validad que todo está OK, vamos a conectarnos a la VM.
+
+Lo primero que debemos hacer es abrir el puerto 3389:
+
+        az vm open-port --port 3389 --resource-group CloudShellWS --name VM
+
+Y luego utilizamos el cliente RDP para conectarnos con el usuario y clave.
+
+# Introducción a Ansible
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 We will now use the Cloud Shell to create a new Azure Container Service (ACS)
 Kubernetes cluster that will be used to host our containers.
@@ -103,7 +191,7 @@ able to use to access your containers and manage your cluster.
 
    [![Launch Cloud Shell](https://shell.azure.com/images/launchcloudshell.png "Launch Cloud Shell")](https://shell.azure.com)
 
-1. Depending on your type of subscription (Free, Azure Pass etc.) you may
+2. Depending on your type of subscription (Free, Azure Pass etc.) you may
    have to register the required resource providers. This is because by
    default many resource providers (types of resource providers) are not
    registered by default.
@@ -120,7 +208,7 @@ able to use to access your containers and manage your cluster.
 
    ![Register Providers](images/registerproviders.png "Register Providers")
 
-1. Come up with a **name** for your ACS service. The name must contain only
+3. Come up with a **name** for your ACS service. The name must contain only
    letters and numbers and be globally unique because it will be used for
   the public URLs of your Kubernetes cluster.
 

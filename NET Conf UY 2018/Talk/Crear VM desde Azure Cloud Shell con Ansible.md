@@ -11,11 +11,13 @@ Para la demo se utilizaron los siguientes valores:
 | Nombre del usuario | vmsilvamolina |
 
 
-**1-** Ver lista de Resource Groups existentes:
+**1-** Ver lista de Resource Groups existentes y crear el grupo de recursos:
 
 A modo de comprobar que se ejecutó correctamente el comando anterior, es posible determinar si el recurso fue creado o no, ejecutando:
 
     az group list --o table
+
+    az group create -n netconfuy -l eastus
 
 **2-** Crear los recursos de networking:
 
@@ -43,25 +45,25 @@ Luego de contar con los requisitos para el despliegue es necesario crear el arch
 
 Insertar la siguiente información:
 
-    - name: Create Azure VM
-    hosts: localhost
-    connection: local
-    tasks:
-    - name: Create VM
-        azure_rm_virtualmachine:
-        resource_group: netconfuy
-        name: LinuxVM
-        vm_size: Standard_DS1_v2
-        admin_username: vmsilvamolina
-        ssh_password_enabled: false
-        ssh_public_keys:
-            - path: /home/vmsilvamolina/.ssh/authorized_keys
-            key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAIvl2EiHvFL8ftjdTQxAjt4/qPkCeAbNfKOV+WG8MGPqAP3s5goG6YC+t4KuKwnB59Gbic+3bLWfo/t7tbCL9CmgVqh2UNWVctZuEi02NxvUPLaTjW0lAblzlGGn9CUXbGGsNNWhJuZpuH+Npw6r1BOC/VGVKJ858IYzll/BM+gZkQAnqJJASRGuFbUyy8OC+ZLiRCJTh5JeoU0iYIwFu0PVfEqvRToIgTtmGNYr9TqbNMgte985tBtQF8/ZmsyYcSfIqBcKoFDd3GdexztygxgQAM+TpgOu9BUsvX6NAfvXpHalaBtnzJT4cG6FYpTxWSzTwIRTgv5Pf4KeHfEaL vmsilvamolina@cc-96005c8c-55d4776955-cvmz4"
-        image:
-            offer: CentOS
-            publisher: OpenLogic
-            sku: '7.5'
-            version: latest
+- name: Create Azure VM
+hosts: localhost
+connection: local
+tasks:
+- name: Create VM
+    azure_rm_virtualmachine:
+    resource_group: netconfuy
+    name: LinuxVM
+    vm_size: Standard_DS1_v2
+    admin_username: vmsilvamolina
+    ssh_password_enabled: false
+    ssh_public_keys:
+        - path: /home/vmsilvamolina/.ssh/authorized_keys
+        key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAIvl2EiHvFL8ftjdTQxAjt4/qPkCeAbNfKOV+WG8MGPqAP3s5goG6YC+t4KuKwnB59Gbic+3bLWfo/t7tbCL9CmgVqh2UNWVctZuEi02NxvUPLaTjW0lAblzlGGn9CUXbGGsNNWhJuZpuH+Npw6r1BOC/VGVKJ858IYzll/BM+gZkQAnqJJASRGuFbUyy8OC+ZLiRCJTh5JeoU0iYIwFu0PVfEqvRToIgTtmGNYr9TqbNMgte985tBtQF8/ZmsyYcSfIqBcKoFDd3GdexztygxgQAM+TpgOu9BUsvX6NAfvXpHalaBtnzJT4cG6FYpTxWSzTwIRTgv5Pf4KeHfEaL vmsilvamolina@cc-96005c8c-55d4776955-cvmz4"
+    image:
+        offer: CentOS
+        publisher: OpenLogic
+        sku: '7.5'
+        version: latest
 
 Y guardar el archivo con el nombre de *azure-Create.yml*
 
