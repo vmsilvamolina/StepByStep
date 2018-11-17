@@ -17,6 +17,7 @@ Workshop pensado para introducirnos a esta herramienta disponible desde el naveg
   - [Parte 1 - Accediendo a la Azure Cloud Shell](#parte-1---accediendo-a-la-azure-cloud-shell)
   - [Parte 2 - Crear una Virtual Machine](#parte-2---crear-una-virtual-machine)
 - [Introducción a Ansible](#introducci%C3%B3n-a-ansible)
+- [Parte 3 - Crear una VM con Ansible](#parte-3---crear-una-vm-con-ansible)
   - [Introduction to Containers, Docker and Kubernetes](#introduction-to-containers-docker-and-kubernetes)
   - [Part 3 - Manage Cluster with Cloud Shell](#part-3---manage-cluster-with-cloud-shell)
   - [Part 4 - Deploy your First Application](#part-4---deploy-your-first-application)
@@ -94,63 +95,82 @@ Ahora vamos a utilizar Azure CLI para generar una máquina virtual.
 
 Azure CLI es la línea de comandos de Azure.
 
-
 1. Crear el grupo de recursos que alojará la VM, ejecutando la siguiente línea:
 
-        az group create --name CloudShellWS --location eastus
+    az group create --name CloudShellWS --location eastus
 
 2. Lo siguiente es crear la vNet:
 
-        az network vnet create --resource-group CloudShellWS --name vNET --subnet-name subnet
+    az network vnet create --resource-group CloudShellWS --name vNET --subnet-name subnet
 
 3. El siguiente paso es crear una Public IP:
 
-        az network public-ip create --resource-group CloudShellWS --name PublicIP
+    az network public-ip create --resource-group CloudShellWS --name PublicIP
 
 4. Continuando el proceso el siguiente paso es crear el Network Security Group.
 
-        az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
+    az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
 
 5. Resta crear la virtual network card y luego, asociarla a la Public IP y el NSG.
-        az network nic create \\
-          --resource-group CloudShellWS \\
-          --name NIC \\
-          --vnet-name vNET \\
-          --subnet subnet \\
-          --network-security-group NetworkSecurityGroup \\
-          --public-ip-address PublicIP
+    az network nic create --resource-group CloudShellWS --name NIC --vnet-name vNET --subnet subnet --network-security-group NetworkSecurityGroup --public-ip-address PublicIP
 
 6. Ahora sí, con todos los recursos generados, vamos a crear la virtual machine.
 
 Pero antes, vamos a generar una variable (la password):
 
-          AdminPassword=ChangeYourAdminPassword1
+    AdminPassword=ChangeYourAdminPassword1
 
 Finalmente ejecutamos el comando para crear la VM:
-          az vm create \
-            --resource-group CloudShellWS \
-            --name VM \
-            --location eastus \
-            --nics NIC \
-            --image win2016datacenter \
-            --admin-username azureuser \
-            --admin-password $AdminPassword
+    
+    az vm create --resource-group CloudShellWS --name VM --location eastus --nics NIC --image win2016datacenter --admin-username azureuser --admin-password $AdminPassword
 
-7. Para validad que todo está OK, vamos a conectarnos a la VM.
+1. Para validad que todo está OK, vamos a conectarnos a la VM.
 
 Lo primero que debemos hacer es abrir el puerto 3389:
 
-          az vm open-port --port 3389 --resource-group CloudShellWS --name VM
+    az vm open-port --port 3389 --resource-group CloudShellWS --name VM
+
+Para obtener la IP pública es necesario ejecutar:
+
+    azure vm show CloudShellWS VM | grep "Public IP address" | awk -F ":" '{print $3}'
 
 Y luego utilizamos el cliente RDP para conectarnos con el usuario y clave.
 
 # Introducción a Ansible
 
+Vamos a charlar un poco de que trata Ansible y como podemos utilizarla desde la Azure Cloud Shell.
 
+# Parte 3 - Crear una VM con Ansible
 
+1. Ver lista de Resource Groups existentes:
 
+A modo de comprobar que se ejecutó correctamente el comando anterior, es posible determinar si el recurso fue creado o no, ejecutando:
 
+    az group list --o table
 
+2. Crear los recursos de networking:
+
+Luego de contar con el Resource Group, lo siguiente es crear la red a la que se va a conectar la VM:
+
+    az network vnet create --resource-group CloudShellWS --name vNET --address-prefix 10.0.0.0/16 --subnet-name subnet --subnet-prefix 10.0.1.0/24
+
+3. Ver los recursos del Resource Group:
+
+Revisar si los recursos de networking han sido creados satisfactoriamente dentro del grupo de recursos:
+
+    az resource list --resource-group CloudShellWS --o table
+
+4. Obtener la clave pública:
+
+Para conectarnos de forma más segura, en lugar de definir una contraseña, vamos a utilizar una clave pública (para ello previamente se debe de haber generado una clave para SSH utilizando *ssh-keygen -t rsa -b 2048*):
+
+    cat ~/.ssh/id_rsa.pub
+
+5. Obtener el playbook:
+
+Se encuentra disponible el archivo con el playbook listo. Para acceder a él basta ejecutar lo siguiente:
+
+    wget 
 
 
 
