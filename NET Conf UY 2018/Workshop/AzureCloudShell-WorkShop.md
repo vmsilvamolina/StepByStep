@@ -112,22 +112,22 @@ Azure CLI es la línea de comandos de Azure.
         az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
 
 5. Resta crear la virtual network card y luego, asociarla a la Public IP y el NSG.
-        az network nic create \
-          --resource-group CloudShellWS \
-          --name NIC \
-          --vnet-name vNET \
-          --subnet subnet \
-          --network-security-group NetworkSecurityGroup \
-          --public-ip-address PublicIP
+          az network nic create \
+            --resource-group CloudShellWS \
+            --name NIC \
+            --vnet-name vNET \
+            --subnet subnet \
+            --network-security-group NetworkSecurityGroup \
+            --public-ip-address PublicIP
 
 6. Ahora sí, con todos los recursos generados, vamos a crear la virtual machine.
 
 Pero antes, vamos a generar una variable (la password):
 
-        AdminPassword=ChangeYourAdminPassword1
+          AdminPassword=ChangeYourAdminPassword1
 
 Finalmente ejecutamos el comando para crear la VM:
-        az vm create \
+          az vm create \
             --resource-group CloudShellWS \
             --name VM \
             --location eastus \
@@ -140,7 +140,7 @@ Finalmente ejecutamos el comando para crear la VM:
 
 Lo primero que debemos hacer es abrir el puerto 3389:
 
-        az vm open-port --port 3389 --resource-group CloudShellWS --name VM
+          az vm open-port --port 3389 --resource-group CloudShellWS --name VM
 
 Y luego utilizamos el cliente RDP para conectarnos con el usuario y clave.
 
