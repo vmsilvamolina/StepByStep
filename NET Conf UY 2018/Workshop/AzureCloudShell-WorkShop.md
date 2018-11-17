@@ -112,13 +112,13 @@ Azure CLI es la línea de comandos de Azure.
         az network nsg create --resource-group CloudShellWS --name NetworkSecurityGroup
 
 5. Resta crear la virtual network card y luego, asociarla a la Public IP y el NSG.
-          az network nic create \
-            --resource-group CloudShellWS \
-            --name NIC \
-            --vnet-name vNET \
-            --subnet subnet \
-            --network-security-group NetworkSecurityGroup \
-            --public-ip-address PublicIP
+        az network nic create \\
+          --resource-group CloudShellWS \\
+          --name NIC \\
+          --vnet-name vNET \\
+          --subnet subnet \\
+          --network-security-group NetworkSecurityGroup \\
+          --public-ip-address PublicIP
 
 6. Ahora sí, con todos los recursos generados, vamos a crear la virtual machine.
 
