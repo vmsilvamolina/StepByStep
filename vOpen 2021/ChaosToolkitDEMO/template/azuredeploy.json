@@ -149,7 +149,7 @@
                                     "appSettings": [
                                         {
                                             "name": "WEBSITE_RUN_FROM_PACKAGE",
-                                            "value": "https://github.com/ThomVanL/blog-azure-chaos-engineering/raw/main/azure/html/regionA/regiona.zip"
+                                            "value": "https://github.com/vmsilvamolina/TalksAndMore/blob/master/vOpen%202021/ChaosToolkitDEMO/html/regionA/regiona.zip"
                                         }
                                     ]
                                 }
@@ -199,7 +199,7 @@
                                     "appSettings": [
                                         {
                                             "name": "WEBSITE_RUN_FROM_PACKAGE",
-                                            "value": "https://github.com/ThomVanL/blog-azure-chaos-engineering/raw/main/azure/html/regionB/regionb.zip"
+                                            "value": "https://github.com/vmsilvamolina/TalksAndMore/blob/master/vOpen%202021/ChaosToolkitDEMO/html/regionB/regionb.zip"
                                         }
                                     ]
                                 }
